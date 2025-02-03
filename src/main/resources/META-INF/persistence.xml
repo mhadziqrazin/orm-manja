@@ -1,0 +1,30 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             version="2.2">
+    <persistence-unit name="deltaPU">
+        <class>org.vmj.model.Product</class>
+        <class>org.vmj.model.DiscountedProduct</class>
+        <class>org.vmj.model.BasicProduct</class>
+
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+
+            <!-- Register custom components -->
+            <property name="hibernate.metadata_builder_contributor"
+                      value="org.vmj.schema.DeltaSchemaContributor"/>
+            <property name="hibernate.event.pre_insert"
+                      value="org.vmj.listener.DecoratorValidationListener"/>
+            <property name="hibernate.ejb.event.pre-insert" value="org.vmj.listener.DecoratorValidationListener"/>
+
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:postgresql://localhost:5432/orm_test_1"/>
+            <property name="javax.persistence.jdbc.driver"
+                      value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.user"
+                      value="postgres"/>
+            <property name="javax.persistence.jdbc.password"
+                      value="admin"/>
+        </properties>
+    </persistence-unit>
+</persistence>
