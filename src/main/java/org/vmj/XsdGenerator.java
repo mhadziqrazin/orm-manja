@@ -17,12 +17,10 @@ import javax.xml.transform.stream.StreamResult;
 
 public class XsdGenerator {
     public static void main(String[] args) throws JAXBException, IOException {
-        // Use a properly formatted path
         String outputDir = "E:/Kuliah/TA/orm-playground";
         String schemaFileName = "product-schema.xsd";
         Path outputPath = Paths.get(outputDir, schemaFileName);
 
-        // Ensure the directory exists
         File dir = new File(outputDir);
         File file = outputPath.toFile();
         if (!dir.exists()) {
@@ -43,10 +41,8 @@ public class XsdGenerator {
         System.out.println("Created: " + dir.exists());
         System.out.println("File exists: " + dir.getAbsolutePath());
 
-        // Create JAXB context for the class
         JAXBContext context = JAXBContext.newInstance(Product.class);
 
-        // Generate XSD schema
         context.generateSchema(new SchemaOutputResolver() {
             @Override
             public Result createOutput(String namespaceUri, String suggestedFileName) {

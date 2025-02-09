@@ -23,21 +23,17 @@ import org.vmj.model.Employee;
 public class HbmXmlExporter {
 
     public static <ExecutionOptions> void main(String[] args) {
-        // Build the StandardServiceRegistry with minimal settings.
-        // Disable JDBC metadata lookup so no live JDBC connection is needed.
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
                 .applySetting("hibernate.temp.use_jdbc_metadata_defaults", "false")
                 .configure("hibernate.cfg.xml")
                 .build();
 
-        // Build the MetadataSources and add your annotated class.
         MetadataSources metadataSources = new MetadataSources(registry);
 //        metadataSources.addPackage("org.vmj");
 //        metadataSources.addAnnotatedClass(org.vmj.model.Employee.class);
         metadataSources.addAnnotatedClass(org.vmj.model.DiscountedProduct.class);
 
-        // Build the Metadata (this replaces the old Configuration.buildMappings() method).
         Metadata metadata = metadataSources.buildMetadata();
 //        Map<String, Object> properties = new HashMap<>( sessionFactory.getProperties() );
 //        SchemaManagementToolCoordinator.process(
@@ -46,18 +42,15 @@ public class HbmXmlExporter {
 //                properties,
 //                action -> {}
 //        );
-        // Iterate over all entity mappings.
         int count = 0;
         System.out.println("Entity: " + metadata.getEntityBindings());
         for (PersistentClass pc : metadata.getEntityBindings()) {
             String mappingXml = generateMappingXml(pc);
 
-            // Derive a file name from the entity class name (e.g., "Employee.hbm.xml").
             String fullClassName = pc.getClassName();
             String simpleName = fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
             String fileName = simpleName + ".hbm.xml";
 
-            // Write the generated XML to a file.
             try (FileWriter writer = new FileWriter(fileName)) {
                 writer.write(mappingXml);
             } catch (IOException e) {
@@ -73,7 +66,6 @@ public class HbmXmlExporter {
                     "Make sure your annotated classes are scanned properly.");
         }
 
-        // Clean up the registry.
         StandardServiceRegistryBuilder.destroy(registry);
     }
 
@@ -89,14 +81,12 @@ public class HbmXmlExporter {
                 .append("  \"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd\">\n")
                 .append("<hibernate-mapping>\n");
 
-        // Write the <class> element with class name and table name.
         xml.append("  <class name=\"")
                 .append(pc.getClassName())
                 .append("\" table=\"")
                 .append(pc.getTable().getName())
                 .append("\">\n");
 
-        // Process the identifier (if defined).
         if (pc.getIdentifierProperty() != null) {
             Property idProp = pc.getIdentifierProperty();
             xml.append("    <id name=\"")
@@ -105,7 +95,6 @@ public class HbmXmlExporter {
                     .append(idProp.getType().getName())
                     .append("\">\n");
 
-            // Get the list of columns for the identifier.
             Value idValue = idProp.getValue();
             List<?> idColumns = idValue.getColumns();
             if (idColumns != null && !idColumns.isEmpty()) {
@@ -118,7 +107,6 @@ public class HbmXmlExporter {
             xml.append("    </id>\n");
         }
 
-        // Process properties.
 
         for (Property prop : pc.getPropertyClosure()) {
             xml.append("    <property name=\"")
@@ -127,7 +115,6 @@ public class HbmXmlExporter {
                     .append(prop.getType().getName())
                     .append("\"");
 
-            // Get the list of columns for the property.
             Value value = prop.getValue();
             List<?> columns = value.getColumns();
             if (columns != null && !columns.isEmpty()) {

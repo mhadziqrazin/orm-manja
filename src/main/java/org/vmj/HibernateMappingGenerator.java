@@ -14,14 +14,11 @@ public class HibernateMappingGenerator {
 
     public static void main(String[] args) {
         try {
-            // Specify the class to map – in this example, Employee.class
             Class<?> clazz = Employee.class;
             String mappingXml = generateMappingXml(clazz);
 
-            // Print the generated XML to the console
             System.out.println(mappingXml);
 
-            // Optionally, write the mapping to a file named "Employee.hbm.xml"
             try (FileWriter writer = new FileWriter(clazz.getSimpleName() + ".hbm.xml")) {
                 writer.write(mappingXml);
             }
@@ -41,30 +38,25 @@ public class HibernateMappingGenerator {
     public static String generateMappingXml(Class<?> clazz) {
         StringBuilder xml = new StringBuilder();
 
-        // XML header and DOCTYPE declaration
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         xml.append("<!DOCTYPE hibernate-mapping PUBLIC \"-//Hibernate/Hibernate Mapping DTD 3.0//EN\" \"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd\">\n");
         xml.append("<hibernate-mapping>\n");
 
-        // Ensure the class is an entity
         if (clazz.getAnnotation(Entity.class) == null) {
             throw new RuntimeException("Class " + clazz.getName() + " is not annotated with @Entity");
         }
 
-        // Get the table name from @Table, if present; otherwise use the class name in uppercase.
         Table tableAnnotation = clazz.getAnnotation(Table.class);
         String tableName = (tableAnnotation != null && !tableAnnotation.name().isEmpty())
                 ? tableAnnotation.name()
                 : clazz.getSimpleName().toUpperCase();
 
-        // Begin the <class> element
         xml.append("    <class name=\"")
                 .append(clazz.getName())
                 .append("\" table=\"")
                 .append(tableName)
                 .append("\">\n");
 
-        // Process the fields: first find the field annotated with @Id
         boolean idFound = false;
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(Id.class)) {
@@ -75,7 +67,6 @@ public class HibernateMappingGenerator {
                         .append(field.getType().getName())
                         .append("\">\n");
 
-                // Get the column name from @Column if available; else default to uppercase field name.
                 Column columnAnnotation = field.getAnnotation(Column.class);
                 String columnName = (columnAnnotation != null && !columnAnnotation.name().isEmpty())
                         ? columnAnnotation.name()
@@ -85,19 +76,16 @@ public class HibernateMappingGenerator {
                         .append(columnName)
                         .append("\"/>\n");
 
-                // Here we use a simple "native" generator for the identifier.
                 xml.append("            <generator class=\"native\"/>\n");
                 xml.append("        </id>\n");
-                break; // Assuming only one identifier field for simplicity.
+                break;
             }
         }
         if (!idFound) {
             throw new RuntimeException("No field annotated with @Id found in class " + clazz.getName());
         }
 
-        // Process remaining fields that are annotated with @Column as simple properties.
         for (Field field : clazz.getDeclaredFields()) {
-            // Skip the field already processed as @Id.
             if (field.isAnnotationPresent(Id.class)) {
                 continue;
             }
@@ -120,7 +108,6 @@ public class HibernateMappingGenerator {
             }
         }
 
-        // End the <class> element and the mapping.
         xml.append("    </class>\n");
         xml.append("</hibernate-mapping>\n");
 
