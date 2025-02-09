@@ -25,11 +25,12 @@
         <property name="hibernate.highlight_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.transform_hbm_xml.enabled">true</property>
+        <property name="hibernate.integrator_provider">org.vmj.integrator.DecoratorMetadataIntegrator</property>
 
         <!-- Scan for annotated entity classes -->
         <mapping class="org.vmj.model.Employee"/>
         <mapping class="org.vmj.model.Product"/>
         <mapping class="org.vmj.model.DiscountedProduct"/>
-
+        <mapping class="org.vmj.model.DiscountedProductB"/>
     </session-factory>
 </hibernate-configuration>

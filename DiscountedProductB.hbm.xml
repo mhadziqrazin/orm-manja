@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="org.vmj.model.DiscountedProductB" table="discounted_products_b">
+    <id name="id" type="long">
+      <column name="id"/>
+      <generator class="identity"/>
+    </id>
+    <property name="name" type="string" column="name"/>
+    <property name="tag" type="string" column="tag"/>
+    <property name="discount" type="big_decimal" column="discount"/>
+  </class>
+</hibernate-mapping>

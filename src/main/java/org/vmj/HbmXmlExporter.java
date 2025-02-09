@@ -11,6 +11,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
@@ -18,6 +19,7 @@ import org.hibernate.mapping.Value;
 import org.hibernate.tool.schema.Action;
 import org.hibernate.tool.schema.TargetType;
 import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
+import org.vmj.integrator.DecoratorMetadataIntegrator;
 import org.vmj.model.Employee;
 
 public class HbmXmlExporter {
@@ -27,6 +29,7 @@ public class HbmXmlExporter {
                 .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
                 .applySetting("hibernate.temp.use_jdbc_metadata_defaults", "false")
                 .configure("hibernate.cfg.xml")
+                .applySetting("hibernate.integrator_provider", DecoratorMetadataIntegrator.class)
                 .build();
 
         MetadataSources metadataSources = new MetadataSources(registry);
@@ -43,6 +46,8 @@ public class HbmXmlExporter {
 //                action -> {}
 //        );
         int count = 0;
+        DecoratorMetadataIntegrator integrator = new DecoratorMetadataIntegrator();
+        integrator.integrate(metadata, (SessionFactoryImplementor) null, null);
         System.out.println("Entity: " + metadata.getEntityBindings());
         for (PersistentClass pc : metadata.getEntityBindings()) {
             String mappingXml = generateMappingXml(pc);
