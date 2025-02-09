@@ -1,0 +1,12 @@
+
+U	java:S106"9Replace this use of System.out or System.err by a logger.(œ°Æ8Ä“çµÌ2
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(€¹•ôıÿÿÿÿ8Ä“çµÌ2
+|
+java:S6201"ZReplace this instanceof check and cast with 'instanceof ProductDecorator productdecorator'(ºûâãüÿÿÿÿ8Å“çµÌ2
+U	java:S106"9Replace this use of System.out or System.err by a logger.(ô¢’ô8ÖÍíµÌ2
+Z	java:S106"9Replace this use of System.out or System.err by a logger.(šİŞ·şÿÿÿÿ8ü—ı¶Ì2
+]	java:S125"<This block of commented-out lines of code should be removed.(˜Æõşÿÿÿÿ8¡ò£ºÌ2
+e
+java:S1128"HRemove this unused import 'org.hibernate.engine.spi.SessionImplementor'.(”Á¸ö8á’œºÌ2
+Y
+java:S1128	"7Remove this unused import 'java.sql.PreparedStatement'.(òÄ™ƒÿÿÿÿÿ8¢ò£ºÌ2

@@ -4,11 +4,13 @@
         <class>org.vmj.model.Product</class>
         <class>org.vmj.model.DiscountedProduct</class>
         <class>org.vmj.model.BasicProduct</class>
+        <class>org.vmj.model.Employee</class>
 
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.transform_hbm_xml.enabled" value="true"/>
 
             <!-- Register custom components -->
             <property name="hibernate.metadata_builder_contributor"

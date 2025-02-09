@@ -3,7 +3,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.vmj.annotation.DeltaEntity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @DeltaEntity(core = Product.class)
