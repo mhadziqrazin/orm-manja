@@ -32,5 +32,6 @@
         <mapping class="org.vmj.model.Product"/>
         <mapping class="org.vmj.model.DiscountedProduct"/>
         <mapping class="org.vmj.model.DiscountedProductB"/>
+
     </session-factory>
 </hibernate-configuration>

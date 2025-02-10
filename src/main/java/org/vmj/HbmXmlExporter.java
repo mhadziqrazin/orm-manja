@@ -2,6 +2,7 @@ package org.vmj;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -19,22 +20,27 @@ import org.hibernate.mapping.Value;
 import org.hibernate.tool.schema.Action;
 import org.hibernate.tool.schema.TargetType;
 import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
-import org.vmj.integrator.DecoratorMetadataIntegrator;
 import org.vmj.model.Employee;
 
 public class HbmXmlExporter {
 
     public static <ExecutionOptions> void main(String[] args) {
+
+        URL employeeClass = HbmXmlExporter.class.getResource("/org/vmj/model/Employee.class");
+        if (employeeClass == null) {
+            System.err.println("Entity class Employee not found!");
+        }
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .applySetting("hibernate.dialect", "org.hibernate.dialect.H2Dialect")
                 .applySetting("hibernate.temp.use_jdbc_metadata_defaults", "false")
                 .configure("hibernate.cfg.xml")
-                .applySetting("hibernate.integrator_provider", DecoratorMetadataIntegrator.class)
+//                .applySetting("hibernate.integrator_provider", DecoratorMetadataIntegrator.class)
                 .build();
 
         MetadataSources metadataSources = new MetadataSources(registry);
 //        metadataSources.addPackage("org.vmj");
 //        metadataSources.addAnnotatedClass(org.vmj.model.Employee.class);
+        metadataSources.addResource("Employee.hbm.xml");
         metadataSources.addAnnotatedClass(org.vmj.model.DiscountedProduct.class);
 
         Metadata metadata = metadataSources.buildMetadata();
@@ -46,8 +52,8 @@ public class HbmXmlExporter {
 //                action -> {}
 //        );
         int count = 0;
-        DecoratorMetadataIntegrator integrator = new DecoratorMetadataIntegrator();
-        integrator.integrate(metadata, (SessionFactoryImplementor) null, null);
+//        DecoratorMetadataIntegrator integrator = new DecoratorMetadataIntegrator();
+//        integrator.integrate(metadata, (SessionFactoryImplementor) null, null);
         System.out.println("Entity: " + metadata.getEntityBindings());
         for (PersistentClass pc : metadata.getEntityBindings()) {
             String mappingXml = generateMappingXml(pc);
@@ -70,7 +76,12 @@ public class HbmXmlExporter {
             System.out.println("No entity bindings were found. " +
                     "Make sure your annotated classes are scanned properly.");
         }
-
+        URL mappingUrl = HbmXmlExporter.class.getClassLoader().getResource("Employee.hbm.xml");
+        if (mappingUrl != null) {
+            System.out.println("Mapping file found: " + mappingUrl);
+        } else {
+            System.err.println("Mapping file Employee.hbm.xml not found!");
+        }
         StandardServiceRegistryBuilder.destroy(registry);
     }
 

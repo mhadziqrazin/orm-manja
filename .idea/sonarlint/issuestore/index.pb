@@ -1,6 +1,4 @@
 
-a
-1src/main/java/org/vmj/annotation/DeltaEntity.java,1\d\1dd54d1cdc372c175941106751ad6ba10413a30a
 X
 (gradle/wrapper/gradle-wrapper.properties,f\b\fbe448ebfc3eb2d4e308f6b8b043666f5b57235e
 ?
@@ -9,9 +7,35 @@ X
 gradlew,5\b\5bbfa66edb4db3c7c33c5181f43510990d3307f9
 g
 7src/main/java/org/vmj/listener/DeltaInsertListener.java,1\0\1054b635e37b21f7df07ce30a906df43f076dabf
-g
-7src/main/java/org/vmj/annotation/DecoratorStrategy.java,7\6\76fc8c2d4525a6038cf513884e5c0967af050b4d
 o
 ?src/main/java/org/vmj/listener/DecoratorValidationListener.java,6\7\67d469e8ea795decc1f42ddff092bffe871dee33
 a
 1src/main/java/org/vmj/model/ProductDecorator.java,6\c\6c1bad081336616c14bc0be75bf64b4cfdb28db2
+a
+1src/main/java/org/vmj/binder/CustomHbmBinder.java,1\f\1f32c79813c9f801ef530ebbf68e683f44e29e27
+f
+6src/main/java/org/vmj/HibernateXMLAppenderExample.java,f\4\f47ae9d5c1c7aefafd27a0a695f7b9857f5fb239
+@
+Employee.hbm.xml,6\3\63ae0759964831314b30c31f970006785ccc5aa2
+I
+DiscountedProduct.hbm.xml,2\c\2c13d1901189445e044257f6b049cc4adf2335af
+?
+Product.hbm.xml,0\7\078c6d92cfb79768eabf68a7a0707390e5eaa5e9
+<
+build.gradle,f\0\f07866736216be0ee2aba49e392191aeae700a35
+U
+%src/main/java/CustomPropertyMain.java,d\c\dc6da9b9826d07c4694cf70112d6eceebc0c0766
+B
+product-schema.xsd,9\7\97b5852b5fdbea40a24a94cafa1e9403faabfe4b
+W
+'src/main/java/org/vmj/XsdGenerator.java,d\b\dba5148b59a30fed5a42481b9dd8fecb034bb693
+j
+:src/main/java/org/vmj/HibernateMappingExporterExample.java,b\9\b9dd6de9c733491d5ea772e47a25b3ea026aeeb4
+d
+4src/main/java/org/vmj/HibernateMappingGenerator.java,8\7\876d2d3f5d1c8b18ff15c27d9112c620c00cf73d
+Y
+)src/main/java/org/vmj/SchemaExporter.java,d\b\db1b34087ccfe6052dc24f1936d88bc97c389b0b
+O
+src/main/java/org/vmj/Main.java,e\c\eca1812b0681acb121aa656eca21b7c01feeb39e
+Y
+)src/main/java/org/vmj/model/Employee.java,f\3\f332ae7fffef380df8577f8a84a2310ab6e9a717

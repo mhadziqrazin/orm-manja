@@ -1,0 +1,6 @@
+
+N	java:S106"9Replace this use of System.out or System.err by a logger.(‹‹¿•
+M	java:S106"9Replace this use of System.out or System.err by a logger.(ïÈ’`
+V	java:S125#"<This block of commented-out lines of code should be removed.(ó◊æ÷˝ˇˇˇˇ
+H
+java:S1128"2Remove this unused import 'org.vmj.model.Product'.(ªÏΩ‡
