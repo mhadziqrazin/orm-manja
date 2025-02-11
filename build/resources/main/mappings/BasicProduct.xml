@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-mapping>
+    <entity name="BasicProduct">
+        <id name="id" type="class java.lang.Long"/>
+        <column name="price" type="BigDecimal"/>
+        <column name="category" type="String"/>
+    </entity>
+</entity-mapping>
