@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group = 'thesis'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // ORM interfaces
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+    // Database connection
+    implementation 'org.postgresql:postgresql:42.6.0'
+}
+
+test {
+    useJUnitPlatform()
+}
