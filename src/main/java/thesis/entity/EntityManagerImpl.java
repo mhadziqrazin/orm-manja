@@ -1,9 +1,6 @@
 package thesis.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import thesis.annotation.Decorator;
 
 import java.lang.reflect.Field;
@@ -35,6 +32,9 @@ public class EntityManagerImpl implements EntityManager {
             List<Object> values = new ArrayList<>();
 
             for (Field field : fields) {
+                if (field.isAnnotationPresent(GeneratedValue.class)) {
+                    continue;
+                }
                 if (field.isAnnotationPresent(Column.class)) {
                     field.setAccessible(true);
                     columnNames.add(field.getAnnotation(Column.class).name());
@@ -48,6 +48,7 @@ public class EntityManagerImpl implements EntityManager {
 
             try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < values.size(); i++) {
+                    // sql key indexing 1 base
                     stmt.setObject(i + 1, values.get(i));
                 }
 
@@ -62,6 +63,37 @@ public class EntityManagerImpl implements EntityManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public <T> List<T> findAll(Class<T> entityClass) {
+        List<T> result = new ArrayList<>();
+
+        try {
+            if (!entityClass.isAnnotationPresent(Entity.class)) {
+                throw new IllegalArgumentException("Class must be an @Entity");
+            }
+
+            String tableName = entityClass.getAnnotation(Table.class).name();
+            String sql = "SELECT * FROM " + tableName;
+            try (PreparedStatement stmt = connection.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    T entity = entityClass.getDeclaredConstructor().newInstance();
+                    for (Field field : entityClass.getDeclaredFields()) {
+                        if (field.isAnnotationPresent(Column.class)) {
+                            field.setAccessible(true);
+                            field.set(entity, rs.getObject(field.getAnnotation(Column.class).name()));
+                        }
+                    }
+                    result.add(entity);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     private Field getIdField(Class<?> clazz) {
