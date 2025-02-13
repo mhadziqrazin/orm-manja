@@ -2,7 +2,10 @@ package thesis;
 
 import thesis.entity.EntityManager;
 import thesis.entity.EntityManagerImpl;
+import thesis.model.Student;
 import thesis.model.User;
+import thesis.model.UserComponent;
+import thesis.model.UserDecorator;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,15 +19,15 @@ public class Main {
         EntityManager entityManager = new EntityManagerImpl(connection);
 
         // Create and persist a new user
-        User newUser = new User("Hajik");
+        User newUser = new UserComponent("Hajik");
         System.out.println(newUser);
         entityManager.create(newUser);
         System.out.println("ID: " + newUser.getId());
         System.out.println("username: " + newUser.getUsername());
 
         System.out.println("Get all users");
-        List<User> users = entityManager.findAll(User.class);
-        for (User user : users) {
+        List<UserComponent> users = entityManager.findAll(UserComponent.class);
+        for (UserComponent user : users) {
             System.out.println(user);
         }
     }
