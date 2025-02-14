@@ -2,6 +2,8 @@ package thesis.entity;
 
 import jakarta.persistence.*;
 import thesis.annotation.Decorator;
+import thesis.model.IDecorator;
+import thesis.model.User;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -19,11 +21,26 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public <T> void create(T entity) {
+    public <T> T create(T entity) {
         try {
             Class<?> clazz = entity.getClass();
             if (!clazz.isAnnotationPresent(Entity.class)) {
                 throw new IllegalArgumentException("Class must be an @Entity");
+            }
+
+            // decorator case
+            Object baseEntity = null;
+            IDecorator decorator = null;
+            if (clazz.isAnnotationPresent(Decorator.class)) {
+                List<String> baseColumnNames = new ArrayList<>();
+                List<Object> baseValues = new ArrayList<>();
+
+                Class<?> baseClass = clazz.getAnnotation(Decorator.class).base();
+                Class<?> superClass = clazz.getSuperclass();
+
+                decorator = (IDecorator) superClass.cast(entity);
+                decorator.setRecord(create(decorator.getRecord()));
+
             }
 
             String tableName = clazz.getAnnotation(Table.class).name();
@@ -31,16 +48,12 @@ public class EntityManagerImpl implements EntityManager {
             List<String> columnNames = new ArrayList<>();
             List<Object> values = new ArrayList<>();
 
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(GeneratedValue.class)) {
-                    continue;
-                }
-                if (field.isAnnotationPresent(Column.class)) {
-                    field.setAccessible(true);
-                    columnNames.add(field.getAnnotation(Column.class).name());
-                    values.add(field.get(entity));
-                }
+            if (clazz.isAnnotationPresent(Decorator.class) && decorator != null) {
+                columnNames.add("id");
+                values.add(decorator.getId());
             }
+
+            readFields(entity, fields, columnNames, values);
 
             // use "?" to secure from sql injection
             String sql = "INSERT INTO " + tableName + " (" + String.join(", ", columnNames) + ") VALUES (" +
@@ -60,8 +73,22 @@ public class EntityManagerImpl implements EntityManager {
                     idField.set(entity, rs.getObject(1));
                 }
             }
+            return entity;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private <T> void readFields(T entity, Field[] fields, List<String> columnNames, List<Object> values) throws IllegalAccessException {
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(GeneratedValue.class)) {
+                continue;
+            }
+            if (field.isAnnotationPresent(Column.class)) {
+                field.setAccessible(true);
+                columnNames.add(field.getAnnotation(Column.class).name());
+                values.add(field.get(entity));
+            }
         }
     }
 
@@ -70,12 +97,8 @@ public class EntityManagerImpl implements EntityManager {
         List<T> result = new ArrayList<>();
 
         try {
-            if (!entityClass.isAnnotationPresent(Entity.class)) {
-                throw new IllegalArgumentException("Class must be an @Entity");
-            }
-
-            String tableName = entityClass.getAnnotation(Table.class).name();
-            String sql = "SELECT * FROM " + tableName;
+            String sql = sqlGetString(entityClass);
+            System.out.println(sql);
             try (PreparedStatement stmt = connection.prepareStatement(sql);
                  ResultSet rs = stmt.executeQuery()) {
 
@@ -87,6 +110,17 @@ public class EntityManagerImpl implements EntityManager {
                             field.set(entity, rs.getObject(field.getAnnotation(Column.class).name()));
                         }
                     }
+
+                    // decorator case
+                    if (entityClass.isAnnotationPresent(Decorator.class)) {
+                        Class<?> baseClass = entityClass.getAnnotation(Decorator.class).base();
+                        for (Field field : baseClass.getDeclaredFields()) {
+                            if (field.isAnnotationPresent(Column.class)) {
+                                field.setAccessible(true);
+                                field.set(entity, rs.getObject(field.getAnnotation(Column.class).name()));
+                            }
+                        }
+                    }
                     result.add(entity);
                 }
             }
@@ -94,6 +128,22 @@ public class EntityManagerImpl implements EntityManager {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    private static <T> String sqlGetString(Class<T> entityClass) {
+        if (!entityClass.isAnnotationPresent(Entity.class)) {
+            throw new IllegalArgumentException("Class must be an @Entity");
+        }
+
+        String tableName = entityClass.getAnnotation(Table.class).name();
+        String sql = "SELECT * FROM " + tableName;
+
+        if (entityClass.isAnnotationPresent(Decorator.class)) {
+            Class<?> baseClass = entityClass.getAnnotation(Decorator.class).base();
+            String baseTableName = baseClass.getAnnotation(Table.class).name();
+            sql += " JOIN " + baseTableName + " ON " + baseTableName + ".id = " + tableName + ".id";
+        }
+        return sql;
     }
 
     private Field getIdField(Class<?> clazz) {
